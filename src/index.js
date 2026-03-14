@@ -185,20 +185,26 @@ app.post('/api/confirm/:txId', async (req, res) => {
    POST /api/status/:txId  (manual trigger)
    ════════════════════════════════════════════════════════════ */
 app.post('/api/status/:txId', async (req, res) => {
-  const state = orderState.get(req.params.txId);
-  if (!state?.orderId) return res.status(404).json({ error: 'No orderId yet' });
-  await doStatus(req.params.txId, state);
-  res.json({ message: 'status sent', transactionId: req.params.txId, orderId: state.orderId });
+  const txId = req.params.txId;
+  const state = orderState.get(txId);
+  if (!state) return res.status(404).json({ error: 'Transaction not found' });
+  // Use txId as fallback orderId if Pramaan mock didn't return one
+  if (!state.orderId) state.orderId = txId;
+  await doStatus(txId, state);
+  res.json({ message: 'status sent', transactionId: txId, orderId: state.orderId });
 });
 
 /* ════════════════════════════════════════════════════════════
    POST /api/track/:txId  (manual trigger)
    ════════════════════════════════════════════════════════════ */
 app.post('/api/track/:txId', async (req, res) => {
-  const state = orderState.get(req.params.txId);
-  if (!state?.orderId) return res.status(404).json({ error: 'No orderId yet' });
-  await doTrack(req.params.txId, state);
-  res.json({ message: 'track sent', transactionId: req.params.txId, orderId: state.orderId });
+  const txId = req.params.txId;
+  const state = orderState.get(txId);
+  if (!state) return res.status(404).json({ error: 'Transaction not found' });
+  // Use txId as fallback orderId if Pramaan mock didn't return one
+  if (!state.orderId) state.orderId = txId;
+  await doTrack(txId, state);
+  res.json({ message: 'track sent', transactionId: txId, orderId: state.orderId });
 });
 
 /* ════════════════════════════════════════════════════════════
@@ -279,10 +285,11 @@ async function doConfirm(txId, state) {
 }
 
 async function doStatus(txId, state) {
-  const payload = buildStatusPayload({ context: state.context, orderId: state.orderId });
+  const orderId = state.orderId || txId; // fallback: use txId if Pramaan mock didn't return orderId
+  const payload = buildStatusPayload({ context: state.context, orderId });
   try {
     await sendONDC(`${state.bppUri}/status`, payload);
-    console.log(`[doStatus] txId=${txId} orderId=${state.orderId}`);
+    console.log(`[doStatus] txId=${txId} orderId=${orderId}`);
     state.step = 'status_sent';
     orderState.set(txId, state);
   } catch (err) {
@@ -291,10 +298,11 @@ async function doStatus(txId, state) {
 }
 
 async function doTrack(txId, state) {
-  const payload = buildTrackPayload({ context: state.context, orderId: state.orderId });
+  const orderId = state.orderId || txId; // fallback: use txId if Pramaan mock didn't return orderId
+  const payload = buildTrackPayload({ context: state.context, orderId });
   try {
     await sendONDC(`${state.bppUri}/track`, payload);
-    console.log(`[doTrack] txId=${txId} orderId=${state.orderId}`);
+    console.log(`[doTrack] txId=${txId} orderId=${orderId}`);
     state.step = 'track_sent';
     orderState.set(txId, state);
   } catch (err) {
