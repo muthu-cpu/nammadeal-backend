@@ -448,11 +448,9 @@ app.post('/ondc/on_confirm', async (req, res) => {
     state.step      = 'on_confirm_received';
     orderState.set(txId, state);
 
-    if (orderId) {
-      // Auto-trigger status + track
-      setTimeout(() => doStatus(txId, state), 500);
-      setTimeout(() => doTrack(txId, state),  1500);
-    }
+    // Always auto-trigger status + track (doStatus/doTrack fall back to txId if orderId is null)
+    setTimeout(() => doStatus(txId, state), 500);
+    setTimeout(() => doTrack(txId, state),  1500);
   }
 });
 
