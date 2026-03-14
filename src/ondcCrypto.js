@@ -16,7 +16,8 @@ const crypto = require('crypto');
  */
 function createAuthHeader(body) {
   const privateKeyB64 = process.env.ONDC_SIGNING_PRIVATE_KEY;
-  const subscriberId  = process.env.ONDC_SUBSCRIBER_ID  || 'nammadeal.app';
+  // ONDC_BAP_ID takes priority so the keyId matches the registered subscriber URL
+  const subscriberId  = process.env.ONDC_BAP_ID || process.env.ONDC_SUBSCRIBER_ID || 'acceptable-dedication-production-5bcd.up.railway.app';
   const uniqueKeyId   = process.env.ONDC_UNIQUE_KEY_ID  || 'nammadeal-key-1';
 
   if (!privateKeyB64) throw new Error('ONDC_SIGNING_PRIVATE_KEY not set in .env');

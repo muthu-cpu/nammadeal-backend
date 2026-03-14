@@ -21,8 +21,9 @@ function buildContext({ action, domain = 'grocery', transactionId, messageId, bp
     country:        'IND',
     city:           '*',           // pan-India (Pramaan mock is pan-India)
     core_version:   '1.2.0',
-    bap_id:         process.env.ONDC_SUBSCRIBER_ID || 'acceptable-dedication-production-5bcd.up.railway.app',
-    bap_uri:        process.env.BACKEND_URL        || 'https://acceptable-dedication-production-5bcd.up.railway.app',
+    // Use ONDC_BAP_ID if set; fall back to the Railway subscriber URL (NOT the nammadeal.app alias)
+    bap_id:         process.env.ONDC_BAP_ID  || 'acceptable-dedication-production-5bcd.up.railway.app',
+    bap_uri:        process.env.ONDC_BAP_URI || 'https://acceptable-dedication-production-5bcd.up.railway.app',
     transaction_id: transactionId  || uuidv4(),
     message_id:     messageId      || uuidv4(),
     timestamp:      new Date().toISOString(),
