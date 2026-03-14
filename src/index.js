@@ -100,9 +100,13 @@ app.post('/api/search', async (req, res) => {
     const payload = buildSearchPayload({ query, domain, location });
     const txId    = payload.context.transaction_id;
 
-    // Fire-and-forget — Pramaan/ONDC will call /ondc/on_search
+    // Send search directly to Pramaan mock BPP (so Pramaan tracks it in test automation)
+    // Also send to gateway for real network discovery
+    sendONDC(`${PRAMAAN_BPP}/search`, payload).catch(err => {
+      console.error('[Pramaan Search Error]', err.response?.data || err.message);
+    });
     sendONDC(`${GATEWAY_URL}/search`, payload).catch(err => {
-      console.error('[ONDC Search Error]', err.response?.data || err.message);
+      console.error('[ONDC Gateway Search Error]', err.response?.data || err.message);
     });
 
     // Seed order state so callbacks can reference it
