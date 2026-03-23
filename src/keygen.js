@@ -30,6 +30,8 @@ function generateKeys() {
 
   const envContent = `# Generated on ${new Date().toISOString()}
 ONDC_SUBSCRIBER_ID=nammadeal.app
+ONDC_BAP_ID=nammadeal.app
+ONDC_BAP_URI=https://acceptable-dedication-production-5bcd.up.railway.app
 ONDC_UNIQUE_KEY_ID=nammadeal-key-1
 ONDC_SIGNING_PRIVATE_KEY=${signingPrivateB64}
 ONDC_SIGNING_PUBLIC_KEY=${signingPublicB64}

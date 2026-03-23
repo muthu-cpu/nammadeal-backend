@@ -7,8 +7,8 @@ const { v4: uuidv4 } = require('uuid');
 /* ── Domain codes per ONDC Network Policy ─────────────────── */
 const DOMAIN_MAP = {
   grocery:  'ONDC:RET10',
-  food:     'ONDC:FnB10',
-  pharma:   'ONDC:RET12',
+  food:     'ONDC:RET11',
+  pharma:   'ONDC:RET18',
   rides:    'ONDC:TRV10',
   travels:  'ONDC:TRV11',
 };

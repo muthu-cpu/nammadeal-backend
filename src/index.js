@@ -29,6 +29,11 @@ const axios   = require('axios');
 const path    = require('path');
 
 const { createAuthHeader }    = require('./ondcCrypto');
+const healthRoutes = require('./routes/health.routes');
+const routePlannerRoutes = require('./routes/routePlanner.routes');
+const foodRoutes = require('./routes/food.routes');
+const searchRoutes = require('./routes/search.routes');
+const deeplinkRoutes = require('./routes/deeplink.routes');
 const {
   buildSearchPayload,
   buildSelectPayload,
@@ -52,6 +57,12 @@ const orderState = new Map();
 
 app.use(cors());
 app.use(express.json());
+
+app.use('/api/v1/health', healthRoutes);
+app.use('/api/v1/routes', routePlannerRoutes);
+app.use('/api/v1/food', foodRoutes);
+app.use('/api/v1/search', searchRoutes);
+app.use('/api/v1/deeplinks', deeplinkRoutes);
 
 /* Static disclosure PDFs */
 app.use('/public', express.static(path.join(__dirname, '../public')));
