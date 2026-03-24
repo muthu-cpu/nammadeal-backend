@@ -58,6 +58,16 @@ const orderState = new Map();
 app.use(cors());
 app.use(express.json());
 
+/* ── ONDC callback alias: /on_* → /ondc/on_* ───────────────
+   Beckn spec says callbacks come to {bap_uri}/on_search etc.
+   Our routes are at /ondc/on_search, so we rewrite the path.  */
+app.use((req, _res, next) => {
+  if (req.method === 'POST' && /^\/on_/.test(req.path)) {
+    req.url = '/ondc' + req.url;
+  }
+  next();
+});
+
 app.use('/api/v1/health', healthRoutes);
 app.use('/api/v1/routes', routePlannerRoutes);
 app.use('/api/v1/food', foodRoutes);
